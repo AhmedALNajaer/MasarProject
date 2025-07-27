@@ -1,7 +1,8 @@
 "use client";
 import logo from "../assets/images/white logo.png";
-import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, NavLink } from "react-router-dom";
+import { getUserProfile } from "../services/UserService";
 import {
   Dialog,
   DialogPanel,
@@ -67,8 +68,42 @@ const callsToAction = [
 const ActiveLink = ({ isActive }) => {
   return isActive ? "text-cyan-500" : "text-gray-700";
 };
+
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userName, setUserName] = useState(null);
+
+  const [showDropdown, setShowDropdown] = useState(false);
+  const navigate = useNavigate();
+  // useEffect(() => {
+  //   // نفترض أن اسم المستخدم مخزن في localStorage باسم "userName"
+  //   const storedName = localStorage.getItem("userName");
+  //   if (storedName) {
+  //     setUserName(storedName);
+  //   }
+  // }, []);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      try {
+        const data = await getUserProfile(); // بيرجع { user: { name, ... } }
+        setUserName(data.user.name);
+      } catch (error) {
+        console.error("خطأ في جلب المستخدم من النافبار", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userName");
+    navigate("/"); // أو "/"
+  };
 
   return (
     <header className="bg-blue-900 rounded-b-2xl  w-[95%] mx-auto">
@@ -146,12 +181,41 @@ export default function Header() {
         </PopoverGroup>
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <NavLink
-            to="/signup"
-            className="text-lg/6 font-zain font-bold text-blue-900 py-1 px-3 rounded-lg bg-white hover:bg-cyan-700 hover:text-white"
-          >
-            انضم لنا <span aria-hidden="true">&rarr;</span>
-          </NavLink>
+          {userName ? (
+            <div className="relative">
+              <button
+                onClick={() => setShowDropdown(!showDropdown)}
+                className="text-blue-900 text-xl font-semibold py-1 px-5 rounded-lg bg-white hover:px-8 hover:py-2 transition-all"
+              >
+                أهلا {userName}
+              </button>
+
+              {showDropdown && (
+                <div className="absolute left-0 mt-2 w-40 bg-white rounded-lg shadow-lg z-50 text-right">
+                  <NavLink
+                    to="/user/personal"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={() => setShowDropdown(false)}
+                  >
+                    الصفحة الشخصية
+                  </NavLink>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-right px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                  >
+                    تسجيل الخروج
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <NavLink
+              to="/signup"
+              className="text-lg/6 font-zain font-bold text-blue-900 py-1 px-3 rounded-lg bg-white hover:bg-cyan-700 hover:text-white"
+            >
+              انضم لنا <span aria-hidden="true">&rarr;</span>
+            </NavLink>
+          )}
         </div>
       </nav>
       <Dialog

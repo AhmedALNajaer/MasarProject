@@ -7,11 +7,13 @@ import Navbar from "../components/navbar.jsx";
 import Footer from "../components/footer.jsx";
 import RightSide from "../components/courses/RightSide(list).jsx";
 import LiftSide from "../components/courses/LiftSide(Content).jsx";
-import CoursesCards from "../components/courses/CoursesCards.jsx";
+// import CoursesCards from "../components/courses/CoursesCards.jsx";
 
 const SingleCoursePage = () => {
   const { id } = useParams();
   const [course, setCourse] = useState(null);
+  const [videos, setVideos] = useState([]);
+  const [selectedVideo, setSelectedVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -31,6 +33,8 @@ const SingleCoursePage = () => {
         const response = await courseService.fetchCourseById(id);
         console.log("بيانات الدورة:", response);
         setCourse(response);
+        setVideos(response.videos || []);
+        setSelectedVideo(response.videos?.[0] || null);
         setLoading(false);
       } catch (error) {
         console.error("فشل في تحميل الدورة:", error);
@@ -65,10 +69,14 @@ const SingleCoursePage = () => {
       <div className="Sides w-[95%] mx-auto mb-20">
         <div className="grid grid-cols-5 gap-10 max-lg:grid-cols-1 max-lg:gap-0">
           {/* right side (list)  */}
-          <RightSide />
+          <RightSide
+            videos={videos}
+            selectedVideo={selectedVideo}
+            onSelectVideo={setSelectedVideo}
+          />
 
           {/* left side content  */}
-          <LiftSide course={course} />
+          <LiftSide course={course} selectedVideo={selectedVideo} />
         </div>
       </div>
       {/* end page sides  */}

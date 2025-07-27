@@ -4,8 +4,8 @@ const DashboardCourseForm = ({
   formData,
   formState,
   handleChange,
-  //   handleVideosChange,
-  //   addVideoField,
+  handleVideosChange,
+  addVideoField,
   handleAddCourse,
   handleEditCourse,
   //   resetForm,
@@ -18,7 +18,7 @@ const DashboardCourseForm = ({
       <h2 className="text-xl font-bold mb-4">
         {formState.isEditing ? "تعديل الدورة" : "إضافة دورة جديدة"}
       </h2>
-      {/* عوان الدورة  */}
+      {/* عنوان الدورة  */}
       <div className="mb-3">
         <label className="block">عنوان الدورة</label>
         <input
@@ -76,6 +76,27 @@ const DashboardCourseForm = ({
           required
         />
       </div>
+      {/* الدروس مقاطع  */}
+      <div className="mb-3">
+        <label className="block">مقاطع الدورة</label>
+        {formData.videos.map((_, index) => (
+          <input
+            key={index}
+            type="file"
+            accept="video/*"
+            onChange={(e) => handleVideosChange(index, e.target.files[0])}
+            className="w-full border px-2 py-1 mb-2 rounded"
+          />
+        ))}
+        <button
+          type="button"
+          onClick={addVideoField}
+          className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+        >
+          إضافة مقطع اخر
+        </button>
+      </div>
+
       {/* اسم المدرس  */}
       <div className="mb-3">
         <label className="block">اسم المدرس</label>

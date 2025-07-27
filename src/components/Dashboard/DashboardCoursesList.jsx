@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import courseService from "../../services/coursesService";
 import DashboardCourseForm from "./DashboardCourseForm";
+import ConfirmModal from "../common/ConfirmModal";
+import { NavLink } from "react-router-dom";
 
 const DashboardCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -16,7 +18,7 @@ const DashboardCourses = () => {
     number_of_lessons: "",
     instructor_name: "",
     image: null,
-    videos: [""],
+    videos: [],
     faculty_department_id: "",
   });
 
@@ -67,18 +69,18 @@ const DashboardCourses = () => {
     }));
   };
 
-  // const handleVideosChange = (index, value) => {
-  //   const updatedVideos = [...formData.videos];
-  //   updatedVideos[index] = value;
-  //   setFormData((prev) => ({ ...prev, videos: updatedVideos }));
-  // };
+  const handleVideosChange = (index, file) => {
+    const updatedVideos = [...formData.videos];
+    updatedVideos[index] = file;
+    setFormData((prev) => ({ ...prev, videos: updatedVideos }));
+  };
 
-  // const addVideoField = () => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     videos: [...prev.videos, ""],
-  //   }));
-  // };
+  const addVideoField = () => {
+    setFormData((prev) => ({
+      ...prev,
+      videos: [...prev.videos, null],
+    }));
+  };
 
   const resetForm = () => {
     setFormData({
@@ -151,6 +153,8 @@ const DashboardCourses = () => {
       console.error("فشل في تعديل الدورة:", error);
     }
   };
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [courseToDelete, setCourseToDelete] = useState(null);
 
   const handleDeleteCourse = async (id) => {
     if (!window.confirm("هل أنت متأكد من حذف هذه الدورة؟")) return;
@@ -213,21 +217,22 @@ const DashboardCourses = () => {
           formData={formData}
           formState={formState}
           handleChange={handleChange}
-          // handleVideosChange={handleVideosChange}
-          // addVideoField={addVideoField}
+          handleVideosChange={handleVideosChange}
+          addVideoField={addVideoField}
           handleAddCourse={handleAddCourse}
           handleEditCourse={handleEditCourse}
           resetForm={resetForm}
         />
       )}
       {/* عرض الدورات */}
-      <div className="grid grid-cols-3 gap-5">
+      <div className="grid grid-cols-4 gap-5 max-xl:grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1">
         {Array.isArray(courses) &&
           courses.map((course) => (
             <div
               key={course.id}
               className="bg-white border-2 border-blue-900 rounded-3xl p-3"
             >
+              {/* الصورة  */}
               {course.image && (
                 <img
                   src={`http://localhost:8000/storage/${course.image}`}
@@ -235,24 +240,57 @@ const DashboardCourses = () => {
                   className="w-full h-48 object-cover rounded-xl mb-2"
                 />
               )}
+              {/* العنوان  */}
               <h2 className="text-xl font-bold mb-1">
                 العنوان :{course.title || "العنوان غير متوفر"}
               </h2>
+              {/* الوصف  */}
               <p className="text-sm mb-1">
                 وصف الدورة :{course.description_paragraph || "الوصف غير موجود"}
               </p>
+              {/* المدة  */}
               <p className="text-sm">المدة: {course.duration || "0 ساعة"}</p>
+              {/* عدد الدروس  */}
               <p className="text-sm">
                 الدروس: {course.number_of_lessons || "0 دروس"}
               </p>
+              {/* المدرس  */}
               <p className="text-sm">
                 المدرس: {course.instructor_name || "غير معروف"}
               </p>
+              {/* الفيديوهات  */}
+              {course.videos && course.videos.length > 0 && (
+                <div className="mt-3">
+                  <h3 className="text-md font-semibold text-blue-900 mb-1">
+                    مقاطع الدورة:
+                  </h3>
+                  <ul className="list-disc list-inside space-y-1">
+                    {course.videos.map((video) => (
+                      <li key={video.id}>
+                        <NavLink
+                          href={`http://localhost:8000/storage/${video.video_path}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline block truncate max-w-full"
+                        >
+                          {video.video_path.split("/").pop()}
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* ازرار التعديل و الحذف  */}
               <div className="buttons flex justify-between w-[80%] m-auto">
                 {/* edit  */}
                 <button
                   className="mt-2 px-4 py-2 text-lg text-white bg-blue-600 rounded-xl hover:bg-blue-800"
                   onClick={() => handleEdit(course)}
+                  // onClick={() => {
+                  //   setCourseToDelete(course.id); // خزّن ID الدورة
+                  //   setShowConfirmModal(true); // اظهر المودال
+                  // }}
                 >
                   تعديل
                 </button>
@@ -320,8 +358,17 @@ const DashboardCourses = () => {
           </div>
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={showConfirmModal}
+        onCancel={() => setShowConfirmModal(false)}
+        onConfirm={() => {
+          handleDeleteCourse(courseToDelete); // نفّذ الحذف
+          setShowConfirmModal(false); // سكّر المودال
+        }}
+        message="هل أنت متأكد أنك تريد حذف هذه الدورة؟"
+      />
     </div>
   );
 };
-
 export default DashboardCourses;

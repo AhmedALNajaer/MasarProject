@@ -9,10 +9,10 @@
 import axios from "axios";
 
 // endpoint لإرسال الرسائل
-const SEND_CONTACT_API = "http://127.0.0.1:8000/api/contactfrom";
+const SEND_CONTACT_API = "http://localhost:8000/api/contact-forms";
 
 // endpoint لعرض الرسائل للادمن
-const GET_CONTACT_MESSAGES_API = "http://127.0.0.1:8000/api/contact-messages";
+const GET_CONTACT_MESSAGES_API = "http://localhost:8000/api/contact-forms";
 
 // دالة إرسال رسالة من فورم التواصل
 export const sendContactForm = async (formData) => {

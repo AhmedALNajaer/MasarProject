@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
 import courseService from "../../services/coursesService";
+import AddCourseToUser from "../../components/common/AddcourcetoUser";
 
-const CourseContent = ({ course }) => {
+const CourseContent = ({ course, selectedVideo }) => {
   return (
     <div className="Content bg-white col-span-4 rounded-3xl p-5 max-lg:order-1 max-lg:mb-10">
       <div>
         {/* start video section  */}
         <div className="w-[80%] h-140 m-auto rounded-3xl overflow-hidden bg-gray-200">
-          {course.video_url ? (
+          {selectedVideo && selectedVideo.video_path ? (
             <video
               className="w-full h-full object-cover rounded-3xl"
               controls
-              src={course.video_url}
+              src={`http://localhost:8000/storage/${selectedVideo.video_path}`}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-blue-900 font-semibold text-lg">
@@ -34,11 +35,12 @@ const CourseContent = ({ course }) => {
               </p>
             </div>
             {/* Add button  */}
-            <div className="col-span-1  text-end max-m:text-center max-m:my-1">
+            <AddCourseToUser courseId={course.id} />
+            {/* <div className="col-span-1  text-end max-m:text-center max-m:my-1">
               <button className="bg-blue-900 text-white py-2 px-3.5 rounded-lg hover:bg-blue-600 transition">
                 اضافة لدوراتك
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* little details  */}
@@ -196,7 +198,10 @@ const CourseContent = ({ course }) => {
                   </div>
                   {/* date ...................................  */}
                   <div>
-                    <time dateTime="2025-05-16" class="text-base text-gray-500">
+                    <time
+                      dateTime="2025-05-16"
+                      className="text-base text-gray-500"
+                    >
                       16 مايو 2025
                     </time>
                   </div>
@@ -213,7 +218,7 @@ const CourseContent = ({ course }) => {
                     مفيد لمصممي المواقع على وجه الخصوص،
                   </p>
                 </div>
-                <hr class="border-blue-100  mt-5" />
+                <hr className="border-blue-100  mt-5" />
               </div>
 
               {/* single Review */}
@@ -294,7 +299,10 @@ const CourseContent = ({ course }) => {
                   </div>
                   {/* date ...................................  */}
                   <div>
-                    <time dateTime="2025-05-16" class="text-base text-gray-500">
+                    <time
+                      dateTime="2025-05-16"
+                      className="text-base text-gray-500"
+                    >
                       16 مايو 2025
                     </time>
                   </div>
@@ -311,7 +319,7 @@ const CourseContent = ({ course }) => {
                     مفيد لمصممي المواقع على وجه الخصوص،
                   </p>
                 </div>
-                <hr class="border-blue-100  mt-5" />
+                <hr className="border-blue-100  mt-5" />
               </div>
             </div>
           </div>

@@ -18,7 +18,7 @@ const CoursesCards = ({ courses }) => {
                   className="h-56 w-full rounded-md object-cover"
                 />
 
-                <div className="mt-2 bg-amber-400">
+                <div className="mt-2 ">
                   <dl>
                     <div>
                       <dd className="text-sm text-gray-500">جديد</dd>

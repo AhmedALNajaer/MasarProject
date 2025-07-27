@@ -64,7 +64,7 @@ const courseService = {
       const response = await axios.get(`${API_ROUTES.getCourses}?page=${page}`);
       console.log("رد الـ API:", response.data);
       // return response.data?.data || response.data;
-      return response.data; // مباشرة بدون data.data
+      return response.data;
     } catch (error) {
       console.error("فشل استدعاء الدورات:", error);
       throw error;
@@ -135,6 +135,17 @@ const courseService = {
     } catch (error) {
       console.error("خطأ في جلب الدورة:", error);
       throw error;
+    }
+  },
+
+  getCourseCount: async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/courses");
+      console.log("📦 عدد الدورات (من total):", response.data.total); // ✅
+      return response.data.total; // بدل data.length
+    } catch (error) {
+      console.error("❌ فشل في جلب عدد الدورات:", error);
+      return 0;
     }
   },
 };

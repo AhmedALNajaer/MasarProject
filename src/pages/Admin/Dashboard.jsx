@@ -1,9 +1,12 @@
-
-
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import Logo from "../../assets/images/logo.png";
+// import DashboardSidebar from "../../components/Dashboard/DashboardSidebar.jsx"
+import DashboardMainOverview from "../../components/Dashboard/DashboardMainOverview .jsx";
 import Messages from "../../components/Dashboard/Messages.jsx";
 import Courses from "../../components/Dashboard/DashboardCoursesList.jsx";
+import Users from "../../components/Dashboard/UsersList.jsx";
 
 const Dashboard = () => {
   const [activePage, setActivePage] = useState("dashboard");
@@ -20,6 +23,11 @@ const Dashboard = () => {
     setActivePage(page);
     localStorage.setItem("activePage", page);
   };
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem("adminToken");
+    navigate("/adminLogin");
+  };
 
   const renderContent = () => {
     switch (activePage) {
@@ -27,9 +35,11 @@ const Dashboard = () => {
         return <Messages />;
       case "courses":
         return <Courses />;
+      case "users":
+        return <Users />;
       case "dashboard":
       default:
-        return <div>محتوى اللوحة العامة</div>;
+        return <DashboardMainOverview onNavigate={handleClick} />;
     }
   };
 
@@ -53,6 +63,19 @@ const Dashboard = () => {
                 }`}
               >
                 اللوحة العامة
+              </button>
+            </li>
+
+            <li>
+              <button
+                onClick={() => handleClick("users")}
+                className={`block w-full text-start rounded-lg px-4 py-2 text-sm font-medium ${
+                  activePage === "users"
+                    ? "bg-gray-100 text-gray-700"
+                    : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                }`}
+              >
+                المستخدمون
               </button>
             </li>
 
@@ -86,7 +109,19 @@ const Dashboard = () => {
       </div>
 
       {/* Content Area */}
-      <div className="w-full p-6">{renderContent()}</div>
+      <div className="w-full p-6">
+        <div>
+          {/* باقي محتوى الداشبورد */}
+
+          <button
+            onClick={handleLogout}
+            className="bg-red-600 text-white px-4 py-2 rounded"
+          >
+            تسجيل خروج
+          </button>
+        </div>
+        {renderContent()}
+      </div>
     </div>
   );
 };

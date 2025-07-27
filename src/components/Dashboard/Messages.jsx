@@ -7,30 +7,6 @@ const Messages = () => {
 
   const isMock = false; // غيّرها لاحقًا لـ false لما يجهز الباك اند
 
-  const mockMessages = [
-    {
-      id: 1,
-      name: "محمد ابو شعبان",
-      email: "example@gmail.com",
-      message_title: "استفسار عن الدورة",
-      message: "هل الدورة تشمل تطبيق عملي؟",
-    },
-    {
-      id: 2,
-      name: "سارة يوسف",
-      email: "sara@gmail.com",
-      message_title: "طلب مساعدة",
-      message: "واجهت مشكلة أثناء التسجيل.",
-    },
-    {
-      id: 3,
-      name: "سارة يوسف",
-      email: "sara@gmail.com",
-      message_title: "طلب مساعدة",
-      message: "واجهت مشكلة أثناء التسجيل.",
-    },
-  ];
-
   useEffect(() => {
     if (isMock) {
       setMessages(mockMessages);
@@ -68,8 +44,11 @@ const Messages = () => {
         <p>لا توجد رسائل حالياً.</p>
       ) : (
         messages.map((msg) => (
-          <div className="w-[100%] grid grid-cols-2 bg-amber-200 " key={msg.id}>
-            <div className="bg-white col-span-1  border-2 border-solid border-blue-900 rounded-2xl my-5 p-3">
+          <div
+            className="w-[100%] grid grid-cols-3 max-xl:grid-cols-2 max-md:grid-cols-1"
+            key={msg.id}
+          >
+            <div className="bg-white border-2 border-solid border-blue-900 rounded-2xl my-5 p-3">
               {/* message id ...................... */}
               <div className="bg-blue-300 w-[15%] flex justify-between p-2 rounded-xl max-lg:w-[25%] max-md:w-[40%] max-xs:w-[80%]">
                 <h1>رقم الرسالة</h1>

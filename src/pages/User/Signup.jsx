@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Logo from "../../assets/images/logo.png";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
-import { registerUser } from "../../services/UserService";
+import { registerUser, getUserProfile } from "../../services/UserService";
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -11,21 +11,61 @@ const SignupPage = () => {
     faculty_department_id: "",
     email: "",
     password: "",
+    password_confirmation: "",
     gender: "",
   });
   // const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
-  
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   // تحقق من تطابق كلمة السر والتأكيد
+  //   if (formData.password !== formData.password_confirmation) {
+  //     alert("كلمة السر وتأكيدها غير متطابقين!");
+  //     return;
+  //   }
+
+  //   try {
+  //     const { user, token } = await registerUser(formData);
+  //     console.log("✅ التوكن المستلم:", token);
+  //     localStorage.setItem("token", token);
+
+  //     const userProfile = await getUserProfile();
+
+  //     navigate("/user/personal", { state: { user: userProfile, token } });
+  //     console.log("تم إنشاء المستخدم:", user);
+  //   } catch (error) {
+  //     console.error("فشل تسجيل الحساب:", error);
+
+  //     if (error.response?.status === 422) {
+  //       const errors = error.response.data.errors;
+  //       const firstError = Object.values(errors)[0][0];
+  //       alert(firstError);
+  //     } else {
+  //       alert("حدث خطأ أثناء تسجيل الحساب، حاول مرة أخرى.");
+  //     }
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const newUser = await registerUser(formData);
-      console.log("تم:", newUser);
-      setSuccess(true);
+      await registerUser(formData); // ما بنحتاج التوكن أو البيانات
+
+      alert("تم إنشاء الحساب بنجاح! قم بتسجيل الدخول.");
+      navigate("/login"); // روح لصفحة تسجيل الدخول
     } catch (error) {
       console.error("فشل تسجيل الحساب:", error);
-      alert("فشل إنشاء الحساب، تأكد من البيانات.");
+
+      if (error.response?.status === 422) {
+        const errors = error.response.data.errors;
+        const firstError = Object.values(errors)[0][0];
+        alert(firstError);
+      } else {
+        alert("حدث خطأ أثناء تسجيل الحساب، حاول مرة أخرى.");
+      }
     }
   };
 
@@ -87,11 +127,11 @@ const SignupPage = () => {
                 <option value="1">علوم الحاسوب</option>
                 <option value="2">تطوير البرمجيات</option>
                 <option value="3">حوسبة الويب</option>
-                <option value="3">نظم تكنولوجيا المعلومات</option>
-                <option value="3">
+                <option value="4">نظم تكنولوجيا المعلومات</option>
+                <option value="5">
                   الحوسبة المتنقلة و تطبيقات الاجهزة الذكية
                 </option>
-                <option value="3">الوسائط المتعددة</option>
+                <option value="6">الوسائط المتعددة</option>
                 {/* أضف باقي الأقسام حسب ما عندك */}
               </select>
               {/* <input
@@ -205,6 +245,31 @@ const SignupPage = () => {
                 />
               </div>
             </div>
+            {/* تأكيد كلمة السر */}
+            <div>
+              <label
+                htmlFor="password_confirmation"
+                className="block text-lg font-medium text-gray-900"
+              >
+                تأكيد كلمة السر
+              </label>
+              <div className="mt-2">
+                <input
+                  id="password_confirmation"
+                  name="password_confirmation"
+                  type="password"
+                  required
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      password_confirmation: e.target.value,
+                    })
+                  }
+                  placeholder="أعد كتابة كلمة السر"
+                  className="block w-full rounded-md bg-white px-3 py-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-900 sm:text-sm/6"
+                />
+              </div>
+            </div>
             {/* button ................................ */}
             <div>
               <button
@@ -233,7 +298,7 @@ const SignupPage = () => {
             </p>
             <button
               className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-              onClick={() => navigate("/userPersonalPage")}
+              onClick={() => navigate("/user/personal")}
             >
               الانتقال إلى صفحتك الشخصية
             </button>
